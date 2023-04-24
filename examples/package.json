@@ -1,0 +1,12 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "Examples for the log receiver library",
+  "main": "write-to-console.mjs",
+  "author": "c43721",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "srcds": "0.1.0"
+  }
+}
