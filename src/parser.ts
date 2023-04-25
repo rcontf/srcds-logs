@@ -4,15 +4,16 @@ import type { RemoteInfo } from "node:dgram";
 const packetHeader = Buffer.from([255, 255, 255, 255]);
 const logMessageEndChar = "L ";
 
-const passwordByte = 0x53;
-const missingPasswordByte = 0x52;
+const passwordFlag = Buffer.from([0x53]);
 
 export function parsePacket(message: Buffer, serverInfo: RemoteInfo) {
   if (message.length < 16) {
     return;
   }
 
-  if (message.subarray(0, 4).compare(packetHeader) !== 0) {
+  const srcdsHeader = message.subarray(0, 4);
+
+  if (srcdsHeader.compare(packetHeader) !== 0) {
     return;
   }
 
@@ -20,6 +21,16 @@ export function parsePacket(message: Buffer, serverInfo: RemoteInfo) {
 
   if (logMessageStart === -1) {
     return;
+  }
+
+  const packetTypeSlice = message.subarray(4, 5);
+  const packetType = packetTypeSlice.compare(passwordFlag);
+
+  if (packetType === 0) {
+    // The packet sent us a password, let's fetch that out
+    const password = message.subarray(5, logMessageStart);
+
+    // TODO: do something with password
   }
 
   logMessageStart += logMessageEndChar.length;
