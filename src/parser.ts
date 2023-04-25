@@ -17,7 +17,7 @@ export function parsePacket(message: Buffer, serverInfo: RemoteInfo) {
     return;
   }
 
-  let logMessageStart = message.indexOf(logMessageEndChar);
+  let logMessageStart = message.indexOf(logMessageEndChar, undefined, "ascii");
 
   if (logMessageStart === -1) {
     return;
@@ -26,20 +26,20 @@ export function parsePacket(message: Buffer, serverInfo: RemoteInfo) {
   const packetTypeSlice = message.subarray(4, 5);
   const packetType = packetTypeSlice.compare(passwordFlag);
 
+  let password = null;
   if (packetType === 0) {
     // The packet sent us a password, let's fetch that out
-    const password = message.subarray(5, logMessageStart);
-
-    // TODO: do something with password
+    password = message.subarray(5, logMessageStart).toString("ascii");
   }
 
   logMessageStart += logMessageEndChar.length;
 
   const fullLogMessage = message
     .subarray(logMessageStart, message.length - 2)
-    .toString();
+    .toString("ascii");
 
   return {
+    password,
     message: fullLogMessage,
     socket: {
       ip: serverInfo.address,
