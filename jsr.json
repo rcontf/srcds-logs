@@ -1,0 +1,5 @@
+{
+  "name": "@c43721/srcds-log-receiver",
+  "version": "1.0.0",
+  "exports": "./rc/index.ts"
+}
