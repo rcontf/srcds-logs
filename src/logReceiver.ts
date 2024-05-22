@@ -3,11 +3,35 @@ import { EventEmitter } from "events";
 import { type Socket, createSocket, type RemoteInfo } from "node:dgram";
 import { parsePacket } from "./parser";
 
+/**
+ * The socket options for the UDP socket
+ */
 export interface LogReceiverOptions {
-  port?: number;
+  /**
+   * The IP address to bind to
+   */
   address?: string;
+
+  /**
+   * The port to use
+   */
+  port?: number;
 }
 
+/**
+ * An event emitter that will emit a message event when a valid UDP log is created on the server
+ * 
+ * ```ts
+import { LogReceiver } from "srcds";
+
+const receiver = new LogReceiver({
+  address: "0.0.0.0",
+  port: 9871,
+});
+
+receiver.on("event", (message) => console.log(message));
+```
+ */
 export class LogReceiver extends EventEmitter {
   #socket: Socket;
 

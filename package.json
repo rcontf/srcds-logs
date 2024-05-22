@@ -6,26 +6,21 @@
   "author": "c43721 <24@elo.associates>",
   "license": "MIT",
   "exports": {
-		"import": "./dist/index.mjs",
-		"require": "./dist/index.js",
-		"types": "./dist/index.d.ts"
-	},
-  "scripts": {
-    "build": "tsup",
-    "build:w": "tsup --watch"
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
+  "scripts": {},
   "files": [
-		"dist/**/*.js*",
-		"dist/**/*.mjs*",
-		"dist/**/*.d*"
-	],
+    "dist/**/*.js*",
+    "dist/**/*.mjs*",
+    "dist/**/*.d*"
+  ],
   "publishConfig": {
-		"access": "public"
-	},
+    "access": "public"
+  },
   "devDependencies": {
-    "@sapphire/ts-config": "^4.0.0",
     "@types/node": "^18.16.0",
-    "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   }
 }
