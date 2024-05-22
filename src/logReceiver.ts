@@ -1,5 +1,5 @@
 import { Buffer } from "node:buffer";
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 import { type Socket, createSocket, type RemoteInfo } from "node:dgram";
 import { parsePacket } from "./parser";
 
@@ -35,6 +35,10 @@ receiver.on("event", (message) => console.log(message));
 export class LogReceiver extends EventEmitter {
   #socket: Socket;
 
+  /**
+   * Creates a new receiver
+   * @param options The log reciever options to use
+   */
   constructor(
     { address, port }: LogReceiverOptions = { address: "0.0.0.0", port: 9871 }
   ) {
