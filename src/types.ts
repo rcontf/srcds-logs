@@ -1,29 +1,23 @@
+import { type RemoteInfo } from "node:dgram";
+
 /**
- * Object holding the parsed information from the UDP log
+ * Represents the parsed information from the message data
  */
 export interface ParsedLogMessage {
   /**
-   * The password sent by the server
+   * The password sent by the server, if present
    */
   password: string | null;
 
   /**
-   * The log the server sent
+   * The message contained in the data
    */
   message: string;
+}
 
+export interface EventData extends ParsedLogMessage {
   /**
-   * The socket information of the server
+   * The remote address information that sent the packet
    */
-  socket: {
-    /**
-     * The source IP of the message
-     */
-    ip: string;
-
-    /**
-     * The port of the server
-     */
-    port: number;
-  };
+  socket: RemoteInfo;
 }

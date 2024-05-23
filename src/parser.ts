@@ -1,18 +1,14 @@
 import { Buffer } from "node:buffer";
-import type { RemoteInfo } from "node:dgram";
 import { logMessageEndChar, packetHeader, passwordFlag } from "./constants";
 import { ParsedLogMessage } from "./types";
 
 /**
  * Parses and validates the incoming buffer
+ * @private
  * @param message The message from the socket
- * @param serverInfo The socket information of the connecting resource
  * @returns An object that contains the log message, the password used, and the socket information or null if no message was parsed
  */
-export function parsePacket(
-  message: Buffer,
-  serverInfo: RemoteInfo
-): ParsedLogMessage | null {
+export function parsePacket(message: Buffer): ParsedLogMessage | null {
   if (message.length < 16) {
     return null;
   }
@@ -47,9 +43,5 @@ export function parsePacket(
   return {
     password,
     message: fullLogMessage,
-    socket: {
-      ip: serverInfo.address,
-      port: serverInfo.port,
-    },
   };
 }
