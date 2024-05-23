@@ -1,6 +1,6 @@
 {
   "name": "@c43721/srcds-log-receiver",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "exports": "./src/index.ts",
   "publish": {
     "exclude": ["./examples"]

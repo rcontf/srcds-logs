@@ -15,6 +15,9 @@ export interface ParsedLogMessage {
   message: string;
 }
 
+/**
+ * The parsed log data
+ */
 export interface EventData extends ParsedLogMessage {
   /**
    * The remote address information that sent the packet
