@@ -1,2 +1,2 @@
 export { LogReceiver, type LogReceiverOptions } from "./logReceiver";
-export { EventData } from "./types";
+export { type EventData } from "./types";

@@ -10,14 +10,14 @@ import { EventData } from "./types";
 export interface LogReceiverOptions {
   /**
    * The address to listen on
-   * 
+   *
    * @default "0.0.0.0"
    */
   address?: string;
 
   /**
    * The port to use
-   * 
+   *
    * @default 9871
    */
   port?: number;
@@ -71,6 +71,29 @@ export interface LogReceiverOptions {
  *
  * While not required, there may be times where you have short-lived receivers. Since each instance creates a socket, closing those sockets becomes a problem. Abort controllers help with that by providing a way to explicitly close the resources for you
  *
+ * @example Using the password and IP to verify the source of the data
+ * ```ts
+ * import { LogReceiver} from "@c43721/srcds-log-receiver";
+ *
+ * const receiver = new LogReceiver({
+ *   address: "0.0.0.0",
+ *   port: 9871,
+ * });
+ *
+ * receiver.on("event", (message) => {
+ *    if (message.password === null) {
+ *      return;
+ *    }
+ *
+ *    if (message.password === "mysuperdupersecretlogpassword") {
+ *      await doSomethingWithTheMessage(message);
+ *    }
+ * });
+ *
+ * ```
+ *
+ * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
+ *
  */
 export class LogReceiver extends EventEmitter {
   #socket: Socket;
@@ -100,7 +123,9 @@ export class LogReceiver extends EventEmitter {
     this.#socket.on("connect", () => this.emit("connect"));
     this.#socket.on("error", (error) => this.emit("error", error));
     this.#socket.on("listening", () => this.emit("listening"));
-    this.#socket.on("message", (buffer, serverInfo) => this.#handleMessage(buffer, serverInfo));
+    this.#socket.on("message", (buffer, serverInfo) =>
+      this.#handleMessage(buffer, serverInfo)
+    );
   }
 
   #handleMessage(buffer: Buffer, serverInfo: RemoteInfo) {
