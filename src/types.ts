@@ -1,4 +1,4 @@
-import { type RemoteInfo } from "node:dgram";
+import type { RemoteInfo } from "node:dgram";
 
 /**
  * Represents the parsed information from the message data

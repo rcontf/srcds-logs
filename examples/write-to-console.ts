@@ -1,4 +1,4 @@
-import { LogReceiver } from "@c43721/srcds-log-receiver";
+import { LogReceiver } from "jsr:@c43721/srcds-log-receiver";
 
 const receiver = new LogReceiver({
   address: "0.0.0.0",

@@ -1,6 +1,6 @@
-import { Buffer } from "node:buffer";
-import { logMessageEndChar, packetHeader, passwordFlag } from "./constants";
-import { ParsedLogMessage } from "./types";
+import type { Buffer } from "node:buffer";
+import { logMessageEndChar, packetHeader, passwordFlag } from "./constants.ts";
+import type { ParsedLogMessage } from "./types.ts";
 
 /**
  * Parses and validates the incoming buffer
@@ -15,30 +15,30 @@ export function parsePacket(message: Buffer): ParsedLogMessage | null {
 
   const srcdsHeader = message.subarray(0, 4);
 
-  if (srcdsHeader.compare(packetHeader) !== 0) {
+  if (srcdsHeader.compare(new Uint8Array(packetHeader)) !== 0) {
     return null;
   }
 
-  let logMessageStart = message.indexOf(logMessageEndChar, undefined, "ascii");
+  let logMessageStart = message.indexOf(logMessageEndChar, undefined, "utf-8");
 
   if (logMessageStart === -1) {
     return null;
   }
 
   const packetTypeSlice = message.subarray(4, 5);
-  const packetType = packetTypeSlice.compare(passwordFlag);
+  const packetType = packetTypeSlice.compare(new Uint8Array(passwordFlag));
 
   let password: string | null = null;
   if (packetType === 0) {
     // The packet sent us a password, let's fetch that out
-    password = message.subarray(5, logMessageStart).toString("ascii");
+    password = message.subarray(5, logMessageStart).toString("utf-8");
   }
 
   logMessageStart += logMessageEndChar.length;
 
   const fullLogMessage = message
     .subarray(logMessageStart, message.length - 2)
-    .toString("ascii");
+    .toString("utf-8");
 
   return {
     password,
