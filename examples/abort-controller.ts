@@ -1,4 +1,4 @@
-import { LogReceiver } from "@c43721/srcds-log-receiver";
+import { LogReceiver } from "jsr:@c43721/srcds-log-receiver";
 
 const controller = new AbortController();
 const { signal } = controller;
