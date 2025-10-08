@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { type Socket, createSocket, type RemoteInfo } from "node:dgram";
+import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
 import type { EventData } from "./types.ts";
 
@@ -92,7 +92,6 @@ export interface LogReceiverOptions {
  * ```
  *
  * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
- *
  */
 export class LogReceiver extends EventEmitter {
   #socket: Socket;
@@ -105,7 +104,7 @@ export class LogReceiver extends EventEmitter {
     options: LogReceiverOptions = {
       address: "0.0.0.0",
       port: 9871,
-    }
+    },
   ) {
     const { address, port, signal } = options;
 
@@ -122,9 +121,7 @@ export class LogReceiver extends EventEmitter {
     this.#socket.on("connect", () => this.emit("connect"));
     this.#socket.on("error", (error) => this.emit("error", error));
     this.#socket.on("listening", () => this.emit("listening"));
-    this.#socket.on("message", (buffer, serverInfo) =>
-      this.#handleMessage(buffer, serverInfo)
-    );
+    this.#socket.on("message", (buffer, serverInfo) => this.#handleMessage(buffer, serverInfo));
   }
 
   #handleMessage(buffer: Uint8Array, serverInfo: RemoteInfo) {
