@@ -1,6 +1,6 @@
 import { logMessageEndChar, packetHeader, passwordFlag } from "./constants.ts";
 import type { ParsedLogMessage } from "./types.ts";
-import { indexOfNeedle } from "@std/bytes/index-of-needle";
+import { equals, indexOfNeedle } from "@std/bytes";
 
 const DECODER = new TextDecoder();
 
@@ -18,7 +18,7 @@ export function parsePacket(message: Uint8Array): ParsedLogMessage | null {
 
   const srcdsHeader = message.subarray(0, 4);
 
-  if (srcdsHeader !== packetHeader) {
+  if (!equals(srcdsHeader, packetHeader)) {
     return null;
   }
 
@@ -29,15 +29,14 @@ export function parsePacket(message: Uint8Array): ParsedLogMessage | null {
   }
 
   let password: Uint8Array | null = null;
-  if (message[5] === passwordFlag) {
+  if (message[4] === passwordFlag) {
     // The packet sent us a password, let's fetch that out
     password = message.subarray(5, logMessageStart);
   }
 
   logMessageStart += logMessageEndChar.length;
 
-  const fullLogMessage = message
-    .subarray(logMessageStart, message.length - 2);
+  const fullLogMessage = message.subarray(logMessageStart, message.length);
 
   return {
     password: password ? DECODER.decode(password) : null,
