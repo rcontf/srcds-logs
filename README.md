@@ -4,7 +4,8 @@ Wrapper around [Source Dedicated Server](https://developer.valvesoftware.com/wik
 
 ## Set Up
 
-Your server must have logs enabled. To do so, run `log on` in your server console or through RCON. In order to receieve messages, you must also add a log address using `logaddress_add` command to add the URL or IP of your server's receiver. To delete a destination, use `logaddress_del`.
+Your server must have logs enabled. To do so, run `log on` in your server console or through RCON. In order to receieve messages, you must also add a log address using `logaddress_add` command to add the URL or IP of your server's receiver.
+To delete a destination, use `logaddress_del`.
 
 You can always list existing addresses using `logaddress_list`.
 
@@ -31,7 +32,8 @@ receiver.on("event", (message) => console.log(message));
 
 ### Security
 
-In order to make this as extendable as possible, there is no built in security. However, you can mitigate this by using `sv_logsecret` and checking for the password in the packet. Otherwise, you can use the Socket information to determine what IPs sent the message.
+In order to make this as extendable as possible, there is no built in security. However, you can mitigate this by using `sv_logsecret` and checking for the password in the packet. Otherwise, you can use the Socket information to determine
+what IPs sent the message.
 
 ### Examples
 

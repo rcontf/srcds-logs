@@ -9,7 +9,9 @@
     "console": "deno run --watch examples/write-to-console.ts",
     "test": "deno test -N"
   },
-  "imports": {
-    "@std/bytes": "jsr:@std/bytes@^1.0.6"
+  "fmt": {
+    "lineWidth": 240,
+    "useBraces": "always",
+    "bracePosition": "sameLineUnlessHanging"
   }
 }

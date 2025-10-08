@@ -7,7 +7,7 @@ const DECODER = new TextDecoder();
 /**
  * Parses and validates the incoming buffer
  * @private
- * 
+ *
  * @param message The message from the socket
  * @returns An object that contains the log message, the password used, and the socket information or null if no message was parsed
  */

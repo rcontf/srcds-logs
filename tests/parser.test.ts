@@ -3,10 +3,10 @@ import assert from "node:assert";
 import { parsePacket } from "../src/parser.ts";
 
 Deno.test("Invalid packets return null", () => {
-    const packet = "bogus"
-    const encoded = new TextEncoder().encode(packet);
+  const packet = "bogus";
+  const encoded = new TextEncoder().encode(packet);
 
-    const result = parsePacket(Buffer.from(encoded));
+  const result = parsePacket(Buffer.from(encoded));
 
-    assert.equal(result, null);
+  assert.equal(result, null);
 });
