@@ -13,5 +13,8 @@
     "lineWidth": 240,
     "useBraces": "always",
     "bracePosition": "sameLineUnlessHanging"
+  },
+  "imports": {
+    "@std/bytes": "jsr:@std/bytes@^1.0.6"
   }
 }
