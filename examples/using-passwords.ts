@@ -5,12 +5,12 @@ const receiver = new LogReceiver({
   port: 9871,
 });
 
-console.log("Log receiver running.. ");
+console.log("Log receiver running");
 
-receiver.on("event", (message) => {
-  if (message.password === null) {
-    return;
-  } else if (message.password === "mysuperdupersecret") {
-    return console.log(message);
+for await (const data of receiver) {
+  if (data.password === null) {
+    console.log("Bad password");
+  } else if (data.password === "mysuperdupersecret") {
+    console.log(data);
   }
-});
+}

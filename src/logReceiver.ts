@@ -25,7 +25,7 @@ export interface LogReceiverOptions {
   /**
    * The abort signal to use
    *
-   * When calling {@link AbortSignal.abort}, it will automatically close the underlying socket
+   * When calling {@linkcode AbortSignal.abort}, it will automatically close the underlying socket
    */
   signal?: AbortSignal;
 }
@@ -94,7 +94,7 @@ export interface LogReceiverOptions {
  *
  * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
  */
-export class LogReceiver extends EventEmitter implements Disposable {
+export class LogReceiver {
   #socket: Socket;
 
   /**
@@ -109,20 +109,26 @@ export class LogReceiver extends EventEmitter implements Disposable {
   ) {
     const { address, port, signal } = options;
 
-    super();
-
     this.#socket = createSocket({
       type: "udp4",
       signal,
     });
 
     this.#socket.bind(port, address);
+  }
 
-    this.#socket.on("close", () => this.emit("close"));
-    this.#socket.on("connect", () => this.emit("connect"));
-    this.#socket.on("error", (error) => this.emit("error", error));
-    this.#socket.on("listening", () => this.emit("listening"));
-    this.#socket.on("message", (buffer, serverInfo) => this.#handleMessage(buffer, serverInfo));
+  /**
+   * Destroys the socket
+   */
+  [Symbol.dispose]() {
+    this.#socket.close();
+  }
+
+  /**
+   * Iterates over all the messages as they come in from the server
+   */
+  async *[Symbol.asyncIterator](): AsyncIterableIterator<EventData> {
+    this.#socket.on("message", (buffer: Uint8Array, serverInfo: RemoteInfo) => yield this.#handleMessage(buffer, serverInfo));
   }
 
   /**
@@ -141,6 +147,6 @@ export class LogReceiver extends EventEmitter implements Disposable {
 
     const eventData = { ...response, socket: serverInfo } satisfies EventData;
 
-    this.emit("event", eventData);
+    return eventData;
   }
 }

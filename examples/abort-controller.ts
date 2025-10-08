@@ -9,9 +9,10 @@ const receiver = new LogReceiver({
   signal,
 });
 
-console.log("Log receiver running.. ");
+console.log("Log receiver running");
 
-receiver.on("event", (message) => console.log(message));
-receiver.on("close", () => console.log("Closed the socket"));
+for await (const data of receiver) {
+  console.log(data);
+}
 
 controller.abort();
