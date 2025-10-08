@@ -6,6 +6,7 @@
     "include": ["jsr.json", "LICENSE", "README.md", "src/**/*.ts"]
   },
   "tasks": {
-    "console": "deno run --watch examples/write-to-console.ts"
+    "console": "deno run --watch examples/write-to-console.ts",
+    "test": "deno test -N"
   }
 }
