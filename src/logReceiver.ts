@@ -1,4 +1,3 @@
-import type { Buffer } from "node:buffer";
 import { EventEmitter } from "node:events";
 import { type Socket, createSocket, type RemoteInfo } from "node:dgram";
 import { parsePacket } from "./parser.ts";
@@ -128,7 +127,7 @@ export class LogReceiver extends EventEmitter {
     );
   }
 
-  #handleMessage(buffer: Buffer, serverInfo: RemoteInfo) {
+  #handleMessage(buffer: Uint8Array, serverInfo: RemoteInfo) {
     const response = parsePacket(buffer);
 
     if (response == null) {
