@@ -1,3 +1,4 @@
+/// <reference types="@types/node" />
 import { EventEmitter } from "node:events";
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
