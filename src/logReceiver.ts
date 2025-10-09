@@ -1,8 +1,8 @@
 /// <reference types="@types/node" />
-import { EventEmitter } from "node:events";
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
 import type { EventData } from "./types.ts";
+import { MuxAsyncIterator } from "@std/async/mux-async-iterator";
 
 /**
  * The socket options for the UDP socket
@@ -96,6 +96,7 @@ export interface LogReceiverOptions {
  */
 export class LogReceiver {
   #socket: Socket;
+  #mux: MuxAsyncIterator<EventData | null>;
 
   /**
    * Creates a new receiver
@@ -115,6 +116,12 @@ export class LogReceiver {
     });
 
     this.#socket.bind(port, address);
+
+    this.#mux = new MuxAsyncIterator();
+
+    this.#socket.on("message", (buffer: Uint8Array, serverInfo: RemoteInfo) => {
+      this.#mux.add(this.#handleMessage(buffer, serverInfo));
+    });
   }
 
   /**
@@ -127,26 +134,19 @@ export class LogReceiver {
   /**
    * Iterates over all the messages as they come in from the server
    */
-  async *[Symbol.asyncIterator](): AsyncIterableIterator<EventData> {
-    this.#socket.on("message", (buffer: Uint8Array, serverInfo: RemoteInfo) => yield this.#handleMessage(buffer, serverInfo));
+  [Symbol.asyncIterator](): AsyncIterableIterator<EventData | null> {
+    return this.#mux.iterate();
   }
-
-  /**
-   * Destroys the socket
-   */
-  [Symbol.dispose]() {
-    this.#socket.close();
-  }
-
+  
   #handleMessage(buffer: Uint8Array, serverInfo: RemoteInfo) {
     const response = parsePacket(buffer);
 
-    if (response == null) {
-      return;
+    if (response === null) {
+      yield null;
     }
 
     const eventData = { ...response, socket: serverInfo } satisfies EventData;
 
-    return eventData;
+    yield eventData;
   }
 }
