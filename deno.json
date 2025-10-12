@@ -2,6 +2,7 @@
   "name": "@c43721/srcds-log-receiver",
   "version": "1.1.4",
   "exports": "./src/index.ts",
+  "lock": false,
   "publish": {
     "include": ["jsr.json", "LICENSE", "README.md", "src/**/*.ts"]
   },
