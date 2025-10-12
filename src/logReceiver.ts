@@ -120,7 +120,7 @@ export class LogReceiver implements Disposable {
       signal,
     });
 
-    signal?.addEventListener("abort", () => this.dispose(), { once: true });
+    signal?.addEventListener("abort", () => this.close(), { once: true });
 
     this.#socket.bind(port, address);
 
@@ -146,10 +146,13 @@ export class LogReceiver implements Disposable {
    * Destroys the socket
    */
   [Symbol.dispose]() {
-    this.dispose();
+    this.close();
   }
 
-  dispose() {
+  /**
+   * Closes the socket and stops listening for messages
+   */
+  close() {
     this.#socket.unref();
     this.#socket.close();
   }
