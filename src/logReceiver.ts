@@ -120,6 +120,8 @@ export class LogReceiver implements Disposable {
       signal,
     });
 
+    signal?.addEventListener("abort", () => this.dispose(), { once: true });
+
     this.#socket.bind(port, address);
 
     this.#stream = new ReadableStream<EventData>({
@@ -130,7 +132,12 @@ export class LogReceiver implements Disposable {
           if (data !== null) {
             controller.enqueue(data);
           }
+
+          signal?.addEventListener("abort", () => controller.close(), { once: true });
         });
+
+        this.#socket.on("close", () => controller.close());
+        this.#socket.on("error", () => controller.error());
       },
     });
   }
@@ -139,8 +146,12 @@ export class LogReceiver implements Disposable {
    * Destroys the socket
    */
   [Symbol.dispose]() {
+    this.dispose();
+  }
+
+  dispose() {
+    this.#socket.unref();
     this.#socket.close();
-    this.#stream.cancel();
   }
 
   /**
