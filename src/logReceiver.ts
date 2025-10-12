@@ -139,7 +139,7 @@ export class LogReceiver extends EventEmitter implements Disposable {
       return;
     }
 
-    const eventData = { ...response, socket: serverInfo } as EventData;
+    const eventData = { ...response, socket: serverInfo } satisfies EventData;
 
     this.emit("event", eventData);
   }

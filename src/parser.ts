@@ -36,7 +36,8 @@ export function parsePacket(message: Uint8Array): ParsedLogMessage | null {
 
   logMessageStart += logMessageEndChar.length;
 
-  const fullLogMessage = message.subarray(logMessageStart, message.length);
+  // -2 for the terminating null byte
+  const fullLogMessage = message.subarray(logMessageStart, message.length - 2);
 
   return {
     password: password ? DECODER.decode(password) : null,
