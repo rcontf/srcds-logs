@@ -136,8 +136,8 @@ export class LogReceiver implements Disposable {
           signal?.addEventListener("abort", () => controller.close(), { once: true });
         });
 
-        this.#socket.on("close", () => controller.close());
-        this.#socket.on("error", () => controller.error());
+        this.#socket.once("close", () => controller.close());
+        this.#socket.on("error", (err) => controller.error(err));
       },
     });
   }
