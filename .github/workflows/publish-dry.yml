@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  publish:
+  publish-dry:
     runs-on: ubuntu-latest
 
     permissions:
