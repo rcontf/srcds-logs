@@ -46,7 +46,7 @@ type EventMap = {
  * myEmitter.emit("error", "x")  // <- Will catch this type error;
  * ```
  */
-interface TypedEventEmitter<Events extends EventMap> {
+export interface TypedEventEmitter<Events extends EventMap> {
   addListener<E extends keyof Events>(event: E, listener: Events[E]): this;
   on<E extends keyof Events>(event: E, listener: Events[E]): this;
   once<E extends keyof Events>(event: E, listener: Events[E]): this;
