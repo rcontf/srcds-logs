@@ -30,6 +30,8 @@ export interface LogReceiverOptions {
   signal?: AbortSignal;
 }
 
+const LogEmitter = EventEmitter as (new () => TypedEventEmitter<MessageEvents>);
+
 /**
  * An event emitter that will emit a message event when a valid UDP log is created on the server
  *
@@ -94,7 +96,7 @@ export interface LogReceiverOptions {
  *
  * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
  */
-export class LogReceiver extends EventEmitter implements TypedEventEmitter<MessageEvents>, Disposable {
+export class LogReceiver extends LogEmitter implements Disposable {
   #socket: Socket;
 
   /**
