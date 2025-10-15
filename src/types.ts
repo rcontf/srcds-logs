@@ -26,6 +26,7 @@ export interface EventData extends ParsedLogMessage {
 }
 
 type EventMap = {
+  // deno-lint-ignore no-explicit-any
   [key: string]: (...args: any[]) => void;
 };
 
