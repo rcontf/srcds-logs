@@ -2,7 +2,7 @@
 import { EventEmitter } from "node:events";
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
-import type { EventData } from "./types.ts";
+import type { EventData, TypedEventEmitter } from "./types.ts";
 
 /**
  * The socket options for the UDP socket
@@ -29,6 +29,11 @@ export interface LogReceiverOptions {
    */
   signal?: AbortSignal;
 }
+
+type MessageEvents = {
+  error: (error: Error) => void;
+  event: (message: EventData) => void;
+};
 
 /**
  * An event emitter that will emit a message event when a valid UDP log is created on the server
@@ -94,7 +99,7 @@ export interface LogReceiverOptions {
  *
  * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
  */
-export class LogReceiver extends EventEmitter implements Disposable {
+export class LogReceiver extends (EventEmitter as new () => TypedEventEmitter<MessageEvents>) implements Disposable {
   #socket: Socket;
 
   /**
