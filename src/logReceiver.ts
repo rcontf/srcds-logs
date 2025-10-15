@@ -123,10 +123,7 @@ export class LogReceiver extends (EventEmitter as new () => TypedEventEmitter<Me
 
     this.#socket.bind(port, address);
 
-    this.#socket.on("close", () => this.emit("close"));
-    this.#socket.on("connect", () => this.emit("connect"));
     this.#socket.on("error", (error) => this.emit("error", error));
-    this.#socket.on("listening", () => this.emit("listening"));
     this.#socket.on("message", (buffer, serverInfo) => this.#handleMessage(buffer, serverInfo));
   }
 
