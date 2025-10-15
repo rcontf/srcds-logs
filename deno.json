@@ -3,7 +3,12 @@
   "version": "1.1.5",
   "exports": "./src/index.ts",
   "publish": {
-    "include": ["jsr.json", "LICENSE", "README.md", "src/**/*.ts"]
+    "include": [
+      "jsr.json",
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
   },
   "tasks": {
     "console": "deno run --watch examples/write-to-console.ts",
@@ -13,6 +18,11 @@
     "lineWidth": 240,
     "useBraces": "always",
     "bracePosition": "sameLineUnlessHanging"
+  },
+  "lint": {
+    "exclude": [
+      "examples/"
+    ]
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.15",
