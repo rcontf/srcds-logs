@@ -1,6 +1,21 @@
 import type { RemoteInfo } from "node:dgram";
 
 /**
+ * The possible events that can be emitted
+ */
+export type MessageEvents = {
+  /**
+   * Emitted when an error occurs
+   */
+  error: (error: Error) => void;
+
+  /**
+   * Emitted when data is received from the server
+   */
+  event: (message: EventData) => void;
+};
+
+/**
  * Represents the parsed information from the message data
  */
 export interface ParsedLogMessage {

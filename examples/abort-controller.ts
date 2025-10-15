@@ -15,4 +15,4 @@ receiver.on("event", (message) => console.log(message));
 
 controller.abort();
 
-console.log("Closed the socket")
+console.log("Closed the socket");
