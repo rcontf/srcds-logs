@@ -2,6 +2,7 @@
   "name": "@c43721/srcds-log-receiver",
   "version": "1.2.0",
   "exports": "./src/index.ts",
+  "lock": false,
   "publish": {
     "include": [
       "jsr.json",
@@ -20,9 +21,7 @@
     "bracePosition": "sameLineUnlessHanging"
   },
   "lint": {
-    "exclude": [
-      "examples/"
-    ]
+    "exclude": ["examples"]
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.15",

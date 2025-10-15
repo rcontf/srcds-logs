@@ -1,4 +1,4 @@
-import { LogReceiver } from "jsr:@c43721/srcds-log-receiver";
+import { LogReceiver } from "../src/index.ts";
 
 const controller = new AbortController();
 const { signal } = controller;
@@ -9,10 +9,14 @@ const receiver = new LogReceiver({
   signal,
 });
 
-console.log("Log receiver running.. ");
+console.log("Log receiver running");
 
-receiver.on("event", (message) => console.log(message));
+// timeout after 5 seconds
+setTimeout(() => {
+  console.log("Aborting");
+  controller.abort();
+}, 5000);
 
-controller.abort();
-
-console.log("Closed the socket");
+for await (const data of receiver) {
+  console.log(data);
+}
