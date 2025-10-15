@@ -1,10 +1,15 @@
 {
   "name": "@c43721/srcds-log-receiver",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "exports": "./src/index.ts",
   "lock": false,
   "publish": {
-    "include": ["jsr.json", "LICENSE", "README.md", "src/**/*.ts"]
+    "include": [
+      "jsr.json",
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
   },
   "tasks": {
     "console": "deno run --watch examples/write-to-console.ts",

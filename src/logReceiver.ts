@@ -1,7 +1,7 @@
 /// <reference types="@types/node" />
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
-import type { EventData } from "./types.ts";
+import type { EventData, MessageEvents, TypedEventEmitter } from "./types.ts";
 
 /**
  * The socket options for the UDP socket

@@ -1,0 +1,20 @@
+name: Check Publish
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  publish-dry:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish package
+        run: npx jsr publish --dry-run
