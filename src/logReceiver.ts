@@ -1,7 +1,7 @@
 /// <reference types="@types/node" />
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
-import type { EventData, MessageEvents, TypedEventEmitter } from "./types.ts";
+import type { EventData } from "./types.ts";
 
 /**
  * The socket options for the UDP socket
@@ -163,7 +163,7 @@ export class LogReceiver implements Disposable {
   [Symbol.asyncIterator](): AsyncIterator<EventData> {
     return this.#stream.values();
   }
-  
+
   #handleMessage(buffer: Uint8Array, serverInfo: RemoteInfo) {
     const response = parsePacket(buffer);
 
