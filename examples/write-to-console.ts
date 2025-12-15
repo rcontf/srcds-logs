@@ -5,6 +5,8 @@ const receiver = new LogReceiver({
   port: 9871,
 });
 
-console.log("Log receiver running.. ");
+console.log("Log receiver running");
 
-receiver.on("event", (message) => console.log(message));
+for await (const data of receiver) {
+  console.log(data);
+}
