@@ -1,2 +1,2 @@
-export { LogReceiver, type LogReceiverOptions } from "./logReceiver.ts";
-export { type EventData } from "./types.ts";
+export { LogReceiver } from "./logReceiver.ts";
+export type { EventData, LogReceiverOptions } from "./types.ts";
