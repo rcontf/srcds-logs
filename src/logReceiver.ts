@@ -1,33 +1,7 @@
 /// <reference types="@types/node" />
 import { createSocket, type RemoteInfo, type Socket } from "node:dgram";
 import { parsePacket } from "./parser.ts";
-import type { EventData } from "./types.ts";
-
-/**
- * The socket options for the UDP socket
- */
-export interface LogReceiverOptions {
-  /**
-   * The address to listen on
-   *
-   * @default "0.0.0.0"
-   */
-  address?: string;
-
-  /**
-   * The port to use
-   *
-   * @default 9871
-   */
-  port?: number;
-
-  /**
-   * The abort signal to use
-   *
-   * When calling {@linkcode AbortSignal.abort}, it will automatically close the underlying socket
-   */
-  signal?: AbortSignal;
-}
+import type { EventData, LogReceiverOptions } from "./types.ts";
 
 /**
  * An event emitter that will emit a message event when a valid UDP log is created on the server

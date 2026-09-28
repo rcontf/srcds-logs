@@ -24,3 +24,29 @@ export interface EventData extends ParsedLogMessage {
    */
   socket: RemoteInfo;
 }
+
+/**
+ * The socket options for the UDP socket
+ */
+export interface LogReceiverOptions {
+  /**
+   * The address to listen on
+   *
+   * @default "0.0.0.0"
+   */
+  address?: string;
+
+  /**
+   * The port to use
+   *
+   * @default 9871
+   */
+  port?: number;
+
+  /**
+   * The abort signal to use
+   *
+   * When calling {@linkcode AbortSignal.abort}, it will automatically close the underlying socket
+   */
+  signal?: AbortSignal;
+}
