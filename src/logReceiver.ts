@@ -45,6 +45,8 @@ export interface LogReceiverOptions {
  *   port: 9871,
  * });
  *
+ * await receiver.start();
+ *
  * for await (const message of receiver) {
  *   console.log(message)
  * }
@@ -63,6 +65,8 @@ export interface LogReceiverOptions {
  *   address: "0.0.0.0",
  *   port: 9871,
  * });
+ *
+ * await receiver.start();
  *
  * // timeout after 5 seconds
  * setTimeout(() => {
@@ -87,6 +91,8 @@ export interface LogReceiverOptions {
  *   port: 9871,
  * });
  *
+ * await receiver.start();
+ *
  * for await (const data of receiver) {
  *   if (data.password === null) {
  *     console.log("Bad password");
@@ -100,46 +106,68 @@ export interface LogReceiverOptions {
  * For security reasons, you should always use a log secret to prevent evaluation of potentially malicious messages. Do this by looking at the password field. In order to set up the log secret, you can use the `sv_logsecret` command
  */
 export class LogReceiver implements Disposable {
-  #socket: Socket;
-  #stream: ReadableStream<EventData>;
+  #options: LogReceiverOptions;
+  #socket: Socket | null = null;
+  #stream: ReadableStream<EventData> | null = null;
+  #listening: Promise<void> | null = null;
 
   /**
    * Creates a new receiver
    * @param options The log reciever options to use
    */
-  constructor(
-    options: LogReceiverOptions = {
-      address: "0.0.0.0",
-      port: 9871,
-    },
-  ) {
-    const { address, port, signal } = options;
+  constructor(options: LogReceiverOptions) {
+    this.#options = options;
+  }
 
-    this.#socket = createSocket({
-      type: "udp4",
-      signal,
-    });
+  /*
+   * Starts the log receiver
+   *
+   * This returns a promise which, when resolved, indicates the socket is listening. This method is safe to call multiple times.
+   */
+  async start(): Promise<void> {
+    if (this.#socket) {
+      return;
+    }
+
+    const { address, port, signal } = this.#options;
+    const socket = createSocket({ type: "udp4", signal });
+
+    this.#socket = socket;
 
     signal?.addEventListener("abort", () => this.close(), { once: true });
 
-    this.#socket.bind(port, address);
+    this.#listening = new Promise((resolve, reject) => {
+      const onListening = () => {
+        socket.off("error", onError);
+        resolve();
+      };
+      const onError = (error: Error) => {
+        socket.off("listening", onListening);
+        reject(error);
+      };
+      socket.once("listening", onListening);
+      socket.once("error", onError);
+    });
+
+    socket.bind(port, address);
 
     this.#stream = new ReadableStream<EventData>({
       start: (controller) => {
-        this.#socket.on("message", (buffer: Uint8Array, serverInfo: RemoteInfo) => {
-          const data = this.#handleMessage(buffer, serverInfo);
+        socket.on("message", (buffer: Uint8Array, info: RemoteInfo) => {
+          const data = this.#handleMessage(buffer, info);
 
           if (data !== null) {
             controller.enqueue(data);
           }
-
-          signal?.addEventListener("abort", () => controller.close(), { once: true });
         });
 
-        this.#socket.once("close", () => controller.close());
-        this.#socket.on("error", (err) => controller.error(err));
+        socket.once("close", () => controller.close());
+        socket.on("error", (err) => controller.error(err));
       },
+      cancel: () => this.close(),
     });
+
+    return await this.#listening;
   }
 
   /**
@@ -153,15 +181,18 @@ export class LogReceiver implements Disposable {
    * Closes the socket and stops listening for messages
    */
   close() {
-    this.#socket.unref();
-    this.#socket.close();
+    this.#socket?.close();
   }
 
   /**
    * Iterates over all the messages as they come in from the server
    */
   [Symbol.asyncIterator](): AsyncIterator<EventData> {
-    return this.#stream.values();
+    if (!this.#socket) {
+      this.start();
+    }
+
+    return this.#stream!.values();
   }
 
   #handleMessage(buffer: Uint8Array, serverInfo: RemoteInfo) {

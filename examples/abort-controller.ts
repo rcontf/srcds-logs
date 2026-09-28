@@ -9,6 +9,8 @@ const receiver = new LogReceiver({
   signal,
 });
 
+await receiver.start();
+
 console.log("Log receiver running");
 
 // timeout after 5 seconds
