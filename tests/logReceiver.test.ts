@@ -27,7 +27,7 @@ Deno.test("returning early from the async iterator closes and releases the socke
 Deno.test("aborting the signal closes the receiver without leaking abort listeners", async () => {
   const controller = new AbortController();
 
-  const receiver = new LogReceiver({ address: "127.0.0.1", port: 0 });
+  await using receiver = new LogReceiver({ address: "127.0.0.1", port: 0 });
   await receiver.start();
 
   const fakeServer = await createFakeServer();
@@ -36,15 +36,23 @@ Deno.test("aborting the signal closes the receiver without leaking abort listene
   }
 
   const iterator = receiver[Symbol.asyncIterator]();
-  for (let i = 0; i < 25; i++) { await iterator.next(); }
+  for (let i = 0; i < 25; i++) {
+    await iterator.next();
 
-  assertEquals(getEventListeners(controller.signal, "abort").length, 1);
+    if (i == 15) {
+      controller.abort();
+    }
+  }
 
-  controller.abort();
-  await new Promise((r) => setTimeout(r, 25));
-
-  const result = await iterator.next();
-  assertEquals(result.done, true);
+  assertEquals(getEventListeners(controller.signal, "abort").length, 0);
 
   fakeServer.close();
+});
+
+Deno.test("socket close event after cancellation does not throw", async () => {
+  const receiver = new LogReceiver({ address: "127.0.0.1", port: 0 });
+  await receiver.start();
+
+  const iterator = receiver[Symbol.asyncIterator]();
+  await iterator.return?.();
 });

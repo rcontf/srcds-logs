@@ -1,12 +1,10 @@
 import { createSocket, type Socket } from "node:dgram";
 
 export function bindSocket(port: number, address = "127.0.0.1"): Promise<Socket> {
-  const socket = createSocket("udp4", () => console.log("listened"));
+  const socket = createSocket("udp4");
 
   return new Promise((resolve, reject) => {
     socket.once("error", reject);
-
-    socket.once("listening", () => console.log("fake server listening"));
 
     socket.bind(port, address, () => {
       socket.off("error", reject);

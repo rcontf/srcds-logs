@@ -84,6 +84,7 @@ export class LogReceiver implements Disposable {
   #socket: Socket | null = null;
   #stream: ReadableStream<EventData> | null = null;
   #listening: Promise<void> | null = null;
+  #closing: Promise<void> | null = null;
 
   /**
    * Creates a new receiver
@@ -135,10 +136,21 @@ export class LogReceiver implements Disposable {
           }
         });
 
-        socket.once("close", () => controller.close());
-        socket.on("error", (err) => controller.error(err));
+        socket.once("close", () => {
+          try {
+            controller.close();
+          } catch {
+            // swallow errors when the stream is already closed
+          }
+        });
+
+        socket.on("error", (err) => {
+          if (controller.desiredSize !== null) {
+            controller.error(err);
+          }
+        });
       },
-      cancel: () => this.close(),
+      cancel: async () => await this.close(),
     });
 
     return await this.#listening;
@@ -152,17 +164,39 @@ export class LogReceiver implements Disposable {
   }
 
   /**
-   * Destroys the socket
+   * Disposes the resources
    */
   [Symbol.dispose]() {
     this.close();
   }
 
   /**
+   * Disposes the resources
+   */
+  async [Symbol.asyncDispose]() {
+    await this.close();
+  }
+
+  /**
    * Closes the socket and stops listening for messages
    */
-  close() {
-    this.#socket?.close();
+  async close(): Promise<void> {
+    if (this.#closing) {
+      return this.#closing;
+    }
+
+    const socket = this.#socket;
+
+    if (!socket) {
+      return Promise.resolve();
+    }
+
+    this.#closing = new Promise((resolve) => {
+      socket.once("close", () => resolve());
+      socket.close();
+    });
+
+    return await this.#closing;
   }
 
   /**
