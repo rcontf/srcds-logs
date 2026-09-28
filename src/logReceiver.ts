@@ -144,6 +144,13 @@ export class LogReceiver implements Disposable {
     return await this.#listening;
   }
 
+  /*
+   * Gets the socket that the connection lives onListening
+   */
+  get socket(): Socket | null {
+    return this.#socket;
+  }
+
   /**
    * Destroys the socket
    */
@@ -163,7 +170,7 @@ export class LogReceiver implements Disposable {
    */
   [Symbol.asyncIterator](): AsyncIterator<EventData> {
     if (!this.#socket) {
-      this.start();
+      throw new Error("Socket is not listening");
     }
 
     return this.#stream!.values();
